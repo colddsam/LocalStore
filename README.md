@@ -157,7 +157,7 @@ else:
 
 ## Contributing
 
-Contributions to LocalStore are welcome! Please read the [contributing guidelines]() before submitting a pull request.
+Contributions to LocalStore are welcome! Please read the [contributing guidelines](https://github.com/colddsam/LocalStore/blob/main/CONTRIBUTING.md) before submitting a pull request.
 
 ## License
 
