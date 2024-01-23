@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "localstore"
+version = "0.1.0"
+description = "LocalStore is a Python library that provides various operations on a local database of products, which can be used to store and manage information about items in a local store inventory."
+authors = ["colddsam <dassamratkumar772@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/colddsam/LocalStore.git"
+Keywords=["Data Conversion","Dataset Creation","CSV File Processing","JSON Serialization","Directory Traversal","File Reading","Data Cleaning","Hashing","Data Structure Manipulation","Exception Handling","File Writing"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+uvicorn = "^0.26.0"
+pydantic = "^2.5.3"
+fastapi = "^0.109.0"
+pandas = "^2.2.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
