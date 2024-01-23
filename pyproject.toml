@@ -6,7 +6,8 @@ authors = ["colddsam <dassamratkumar772@gmail.com>"]
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/colddsam/LocalStore.git"
-Keywords=["Data Conversion","Dataset Creation","CSV File Processing","JSON Serialization","Directory Traversal","File Reading","Data Cleaning","Hashing","Data Structure Manipulation","Exception Handling","File Writing"
+keywords=["Data Conversion","Dataset Creation","CSV File Processing","JSON Serialization","Directory Traversal","File Reading","Data Cleaning","Hashing","Data Structure Manipulation","Exception Handling","File Writing"]
+
 
 [tool.poetry.dependencies]
 python = "^3.10"
