@@ -98,9 +98,11 @@ class LocalStore:
             else:
                 self.response["status"]=False
                 self.response["response"]=f"Item already exist : {product_name}"
+                return self.response
         except Exception as e:
             self.response["status"]=False
             self.response["response"]=f"Error Observed : {e}"
+            return self.response
     
     def Show_Data(self,index:str="")->dict:
         flag=False

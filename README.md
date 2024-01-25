@@ -1,23 +1,10 @@
-# LocalStore
+# localstore
 
-## Introduction
-
-LocalStore is a Python library that provides various operations on a local database of products, which can be used to store and manage information about items in a local store inventory.
-
-## Features
-
-* **View Items**: Get a list of all items in the database.
-* **View Product List**: Get a list of all products in the database along with their details.
-* **View Random Product**: Get a random product from the database.
-* **Add New Product**: Add a new product to the database.
-* **Add New Item**: Add a new item to a product in the database.
-* **Show Data**: Get the data of a specific item in the database.
-* **Delete Data**: Delete a specific item from the database.
-* **Write JSON**: Save the database to a JSON file and a text file containing the length of the database.
+The `localstore` package is a collection of Python modules for managing data in a local store. It includes modules for converting CSV files to a JSON dataset, managing data in a local JSON store, and creating a local API for accessing data in the store.
 
 ## Installation
 
-To install LocalStore, run the following command in your terminal:
+To install the `localstore` package, you can use pip:
 
 ```
 pip install localstore
@@ -25,135 +12,124 @@ pip install localstore
 
 ## Usage
 
-### Initialization
+### DatasetConverter
 
-To use LocalStore, you need to create an instance of the `LocalStore` class. You can pass the path to a JSON file containing the database and a text file containing the length of the database as arguments to the constructor. If you do not pass these arguments, the default dataset will be loaded.
+The `DatasetConverter` module provides a simple and intuitive API for converting CSV files to a JSON dataset. To use the `DatasetConverter` module, you can:
 
-```
-from localstore import LocalStore
+1. Import the `DatasetConverter` module:
 
-# Initialize the LocalStore class with default dataset
-store = LocalStore()
-
-# Initialize the LocalStore class with custom dataset and length file
-store = LocalStore(data="path/to/dataset.json", length="path/to/length.txt")
+```python
+from localstore.DatasetConverter import Converter
 ```
 
-### Show Items
+2. Create an instance of the `Converter` class:
 
-To get a list of all items in the database, use the `Show_Items` method.
-
-```
-response = store.Show_Items()
-
-if response["status"]:
-    print(response["response"])  # List of items
-else:
-    print(response["response"])  # Error message
+```python
+converter = Converter()
 ```
 
-### Show Product List
+3. Convert all the CSV files in a specified directory to a JSON dataset:
 
-To get a list of all products in the database along with their details, use the `Show_product_List` method.
-
-```
-response = store.Show_product_List(product_name="product_name")
-
-if response["status"]:
-    print(response["response"])  # List of products
-else:
-    print(response["response"])  # Error message
+```python
+converter.Dataset_From_Directory('path/to/directory')
 ```
 
-### Show Random Product
+4. Convert a single CSV file to a JSON dataset:
 
-To get a random product from the database, use the `Show_Random_Product` method.
-
-```
-response = store.Show_Random_Product()
-
-if response["status"]:
-    print(response["response"])  # Random product
-else:
-    print(response["response"])  # Error message
+```python
+converter.Dataset_From_File('path/to/file.csv')
 ```
 
-### Add New Product
+5. Create a JSON dataset file and a text file containing the length of the dataset:
 
-To add a new product to the database, use the `Add_New_Product` method. You need to pass the product name and a dictionary containing the product details as arguments to the method.
-
-```
-product_name = "product_name"
-product_details = {"key1": "value1", "key2": "value2"}
-
-response = store.Add_New_Product(product_name, product_details)
-
-if response["status"]:
-    print(response["response"])  # Newly added product
-else:
-    print(response["response"])  # Error message
+```python
+converter.Create_Dataset()
 ```
 
-### Add New Item
+### LocalStore
 
-To add a new item to a product in the database, use the `Add_New_Item` method. You need to pass the product name as an argument to the method.
+The `LocalStore` module provides a simple and intuitive API for managing data in a local JSON store. To use the `LocalStore` module, you can:
 
-```
-product_name = "product_name"
+1. Import the `LocalStore` module:
 
-response = store.Add_New_Item(product_name)
-
-if response["status"]:
-    print(response["response"])  # New item added message
-else:
-    print(response["response"])  # Error message
+```python
+from localstore.LocalStore import LocalStore
 ```
 
-### Show Data
+2. Create an instance of the `LocalStore` class:
 
-To get the data of a specific item in the database, use the `Show_Data` method. You need to pass the item index as an argument to the method.
-
-```
-item_index = "item_index"
-
-response = store.Show_Data(item_index)
-
-if response["status"]:
-    print(response["response"])  # Item data
-else:
-    print(response["response"])  # Error message
+```python
+local_store = LocalStore()
 ```
 
-### Delete Data
+3. Add a new product to the local store:
 
-To delete a specific item from the database, use the `Delete_Data` method. You need to pass the item index as an argument to the method.
-
+```python
+product = {
+    'name': 'iPhone 13 Pro',
+    'main_category': 'Electronics',
+    'sub_category': 'Smartphones',
+    'image': 'https://example.com/iphone-13-pro.jpg',
+    'link': 'https://example.com/iphone-13-pro',
+    'ratings': '4.5',
+    'no_of_ratings': '100',
+    'discount_price': '999.00',
+    'actual_price': '1099.00'
+}
+local_store.Add_New_Product(product_name='Apple', data=product)
 ```
-item_index = "item_index"
 
-response = store.Delete_Data(item_index)
+4. Get a list of all the products in the local store:
 
-if response["status"]:
-    print(response["response"])  # Deleted item data
-else:
-    print(response["response"])  # Error message
+```python
+products = local_store.Show_product_List()
 ```
 
-### Write JSON
+5. Print the list of products:
 
-To save the database to a JSON file and a text file containing the length of the database, use the `Write_Json` method. You can pass the paths to the JSON file and the text file as arguments to the method.
-
+```python
+for product in products:
+    print(product)
 ```
-json_path = "path/to/dataset.json"
-text_path = "path/to/length.txt"
 
-response = store.Write_Json(json_path, text_path)
+### LocalAPI
 
-if response["status"]:
-    print(response["response"])  # File saved message
-else:
-    print(response["response"])  # Error message
+The `LocalAPI` module provides a simple and intuitive API for creating a local API for accessing data in the store. To use the `LocalAPI` module, you can:
+
+1. Import the `LocalAPI` module:
+
+```python
+from localstore.LocalAPI import LocalAPI
 ```
+
+2. Create an instance of the `LocalAPI` class:
+
+```python
+local_api = LocalAPI()
+```
+
+3. Start the LocalAPI server:
+
+```python
+local_api.runServer()
+```
+
+4. Send API requests to the LocalAPI server to perform CRUD operations on data in the local store:
+
+```python
+import requests
+
+# Get a list of all the products in the local store
+products = requests.get('http://localhost:5000/products/show/')
+
+# Print the list of products
+for product in products.json():
+    print(product)
+```
+
+## Conclusion
+
+The `localstore` package is a powerful and easy-to-use Python package for managing data in a local store. It is a great choice for a variety of applications, including e-commerce websites, content management systems, data analysis applications, and any other application that needs to store data locally. 
 
 ## Contributing
 
@@ -161,4 +137,4 @@ Contributions to LocalStore are welcome! Please read the [contributing guideline
 
 ## License
 
-LocalStore is licensed under the MIT License
+LocalStore is licensed under the [MIT License](https://github.com/colddsam/LocalStore/blob/b21bdae42f8a31a7ca5e9d954dace06d66c132f6/LICENSE)
