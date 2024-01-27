@@ -15,7 +15,6 @@ def test_show_items(localstore_instance):
 
 def test_show_product_list(localstore_instance):
     result = localstore_instance.Show_product_List('existing_product')
-    # Assuming 'existing_product' doesn't exist in the default dataset
     assert result["status"] is False
 
 
@@ -38,13 +37,11 @@ def test_add_new_item(localstore_instance):
 
 def test_show_data(localstore_instance):
     result = localstore_instance.Show_Data('existing_index')
-    # Assuming 'existing_index' doesn't exist in the default dataset
     assert result["status"] is False
 
 
 def test_delete_data(localstore_instance):
     result = localstore_instance.Delete_Data('index_to_delete')
-    # Assuming 'index_to_delete' doesn't exist in the default dataset
     assert result["status"] is False
 
 
@@ -52,4 +49,3 @@ def test_write_json(localstore_instance):
     result = localstore_instance.Write_Json()
     assert result["status"] is True
 
-# Additional test cases may be needed based on the specific requirements and scenarios.

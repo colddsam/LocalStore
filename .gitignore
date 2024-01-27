@@ -3,3 +3,9 @@ __pycache__
 poetry.lock
 main.py
 localstore
+CONVERTED_DATASET
+DATASET
+products.csv
+DATASET.json
+LENGTH.txt
+.pytest_cache

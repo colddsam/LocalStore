@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "localstore"
-version = "0.1.0"
-description = "LocalStore is a Python library that provides various operations on a local database of products, which can be used to store and manage information about items in a local store inventory."
+version = "0.2.1"
+description = "LocalStore is a Python library that provides various operations on a local database of products, which can be used to store and manage information about items in a local store inventory and it also give mobility to create an local API for the database. Besides this it can convert CSV file to json."
 authors = ["colddsam <dassamratkumar772@gmail.com>"]
 readme = "README.md"
 license = "MIT"

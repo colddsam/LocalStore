@@ -1,177 +1,172 @@
-from localstore.Dataset import DATA,LENGTH
+from localstore.Dataset import DATA
 import hashlib
 import json
 import os
 
 class LocalStore:
-    def __init__(self,data:str='DATASET/DATASET.json',length:str='DATASET/LENGTH.txt') -> None:
+    def __init__(self, data_path: str='CONVERTED_DATASET/DATASET.json') -> None:
         try:
-            with open(data,'r') as f:
-                self.data=json.load(f)
-            with open(length,'r') as f:
-                self.length=f.read()
+            with open(data_path, 'r') as f:
+                self.data = json.load(f)
             print("Successfully uploaded the data to the class")
         except Exception as e:
-            self.length=LENGTH
-            self.data=DATA
+            self.data = DATA
             print("Data upload unsuccessful default dataset has uploaded")
-        self.response={
-            "status":True,
-            "response":""
+        self.response = {
+            "status": True,
+            "response": ""
         }
         
-    def Show_Items(self)->dict:
+    def Show_Items(self) -> dict:
         try:
-            self.response["status"]=True
-            self.response["response"] = list(self.data.keys())
+            self.response["status"] = True
+            self.response["response"] = list(self.data["items"].keys())
             return self.response
         except Exception as e:
-            self.response["status"]=False,
-            self.response["response"]=f"Error Observed : {e}"
+            self.response["status"] = False
+            self.response["response"] = f"Error Observed: {e}"
+            return self.response
             
-    def Show_product_List(self,product_name:str='')->dict:
-        if product_name in self.data:
-            self.response["status"]=True
-            self.response["response"]=self.data[product_name]
+    def Show_product_List(self, product_name: str = '') -> dict:
+        if product_name in self.data["items"]:
+            self.response["status"] = True
+            self.response["response"] = self.data["items"][product_name]
             return self.response
         else:
-            self.response["status"]=False
-            self.response["response"]= "Product not found in the Database"
+            self.response["status"] = False
+            self.response["response"] = "Product not found in the Database"
             return self.response
         
-    def Show_Random_Product(self)->dict:
+    def Show_Random_Product(self) -> dict:
         try:
-            temp={}
-            for item in list(self.data.keys()):
-                for idx in self.data[item]:
-                    temp[idx]=self.data[item][idx]
+            temp = {}
+            for item in list(self.data["items"].keys()):
+                for idx in self.data["items"][item]["products"]:
+                    temp[idx] = self.data["items"][item]["products"][idx]
                     break
-            self.response["status"]=True
-            self.response["response"]=temp
+            self.response["status"] = True
+            self.response["response"] = temp
             return self.response
         except Exception as e:
-            self.response["status"]=False
-            self.response["response"]=f"Error Observed {e}"
+            self.response["status"] = False
+            self.response["response"] = f"Error Observed: {e}"
             return self.response
         
-    def Add_New_Product(self,product_name:str='',data:dict={})->dict:
+    def Add_New_Product(self, item_name: str = '', data: dict = {}) -> dict:
         try:
-            product_name=product_name.lower()
-            if product_name in self.data:
-                for val in self.data[product_name]:
-                    indexes=[index.lower() for index in list(self.data[product_name][val].keys())]
+            item_name = item_name.lower()
+            if item_name in self.data["items"]:
+                for validx in self.data["items"][item_name]["products"]:
+                    indexes = [index.lower() for index in list(self.data["items"][item_name]["products"][validx].keys())]
                     break
                 indexes.sort()
-                keys=[val.lower() for val in list(data.keys())]
+                keys = [val.lower() for val in list(data.keys())]
                 keys.sort()
-                if indexes==keys:
-                    self.length+=1
-                    tempid=str(self.length)
-                    tempid=hashlib.sha256(tempid.encode()).hexdigest()
-                    self.data[product_name][tempid]={i:data[i] for i in indexes}
-                    self.response["status"]=True
-                    self.response["response"]={
-                        tempid:data
+                if indexes == keys:
+                    self.data["length"] += 1
+                    self.data["items"][item_name]["length"] += 1
+                    tempid = item_name + str(self.data["items"][item_name]["length"])
+                    tempid = hashlib.sha256(tempid.encode()).hexdigest()
+                    self.data["items"][item_name]["products"][tempid] = {i: data[i] for i in indexes}
+                    self.response["status"] = True
+                    self.response["response"] = {
+                        tempid: data
                     }
                     return self.response
                 else:
-                    self.response["status"]=False
-                    self.response["response"]="Parameter not matched"
+                    self.response["status"] = False
+                    self.response["response"] = "Parameter not matched"
                     return self.response
             else:
-                self.response["status"]=False
-                self.response["response"]="Parameter not found"
+                self.response["status"] = False
+                self.response["response"] = "Parameter not found"
                 return self.response
         except Exception as e:
-            self.response["status"]=False
-            self.response["response"]=f"Error Observed : {e}"
+            self.response["status"] = False
+            self.response["response"] = f"Error Observed: {e}"
             return self.response
         
-    def Add_New_Item(self,product_name:str='')->dict:
+    def Add_New_Item(self, item_name: str = '') -> dict:
         try:
-            temp = list(self.data.keys())
-            if product_name not in temp:
-                self.data[product_name]={}
-                self.response["status"]=True
-                self.response["response"]=f"new Item added : {product_name}"
+            temp = list(self.data["items"].keys())
+            if item_name not in temp:
+                self.data["items"][item_name] = {}
+                self.response["status"] = True
+                self.response["response"] = f"new Item added: {item_name}"
                 return self.response
             else:
-                self.response["status"]=False
-                self.response["response"]=f"Item already exist : {product_name}"
+                self.response["status"] = False
+                self.response["response"] = f"Item already exists: {item_name}"
                 return self.response
         except Exception as e:
-            self.response["status"]=False
-            self.response["response"]=f"Error Observed : {e}"
+            self.response["status"] = False
+            self.response["response"] = f"Error Observed: {e}"
             return self.response
     
-    def Show_Data(self,index:str="")->dict:
-        flag=False
+    def Show_Data(self, index: str = "") -> dict:
+        flag = False
         try:
-            index=index.lower()
-            for item in self.data:
-                keys=list(self.data[item].keys())
+            index = index.lower()
+            for item in self.data["items"]:
+                keys = list(self.data["items"][item]["products"].keys())
                 if index in keys:
-                    temp={
-                        index:self.data[item][index]
+                    temp = {
+                        index: self.data["items"][item]["products"][index]
                     }
-                    flag=True
+                    flag = True
                     break
             if flag:
-                self.response["status"]=True
-                self.response["response"]=temp
+                self.response["status"] = True
+                self.response["response"] = temp
                 return self.response
             else:
-                self.response["status"]=False
-                self.response["response"]=f"index doesnot found : {index}"
+                self.response["status"] = False
+                self.response["response"] = f"Index does not found: {index}"
                 return self.response
         except Exception as e:
-            self.response["status"]=False
-            self.response["response"]=f"Error Observed : {e}"
+            self.response["status"] = False
+            self.response["response"] = f"Error Observed: {e}"
             return self.response
         
-    def Delete_Data(self,index:str='')->dict:
-        flag=False
+    def Delete_Data(self, index: str = '') -> dict:
+        flag = False
         try:
-            index=index.lower()
-            for item in self.data:
-                keys=list(self.data[item].keys())
+            index = index.lower()
+            for item in self.data["items"]:
+                keys = list(self.data["items"][item]["products"].keys())
                 if index in keys:
-                    temp=self.data[item].pop(index)
-                    flag=True
+                    temp = self.data["items"][item]["products"].pop(index)
+                    flag = True
+                    self.data["items"][item]["length"] -= 1
+                    self.data["length"] -= 1
                     break
             if flag:
-                self.response["status"]=True
-                self.response["response"]=temp
+                self.response["status"] = True
+                self.response["response"] = temp
                 return self.response
             else:
-                self.response["status"]=False
-                self.response["response"]="Index not found"
+                self.response["status"] = False
+                self.response["response"] = "Index not found"
                 return self.response
         except Exception as e:
-            self.response["status"]=False
-            self.response["response"]=f"Error Observed : {e}"
+            self.response["status"] = False
+            self.response["response"] = f"Error Observed: {e}"
             return self.response
         
-    def Write_Json(Self,textpath:str='LENGTH.txt',jsonpath:str='DATASET.json')->dict:
+    def Write_Json(self, textpath: str = 'LENGTH.txt', jsonpath: str = 'DATASET.json') -> dict:
         try:
-            os.mkdir('DATASET')
+            os.makedirs('CONVERTED_DATASET', exist_ok=True)
         except Exception as e:
             pass
         try:
-            count=0
-            for item in Self.data:
-                for idx in Self.data[item]:
-                    count+=1
-            with open(os.path.join('DATASET',jsonpath),'w') as f:
-                json.dump(Self.data,f)
-                f.close()
-            with open(os.path.join('DATASET',textpath),'w') as p:
-                p.write(str(count))
-                p.close()
-            Self.response["status"]=True
-            Self.response["response"]=f"json file saved at : {jsonpath} and text file saved at : {textpath}"
-            return Self.response
+            with open(os.path.join('DATASET', jsonpath), 'w') as f:
+                json.dump(self.data, f)
+            with open(os.path.join('DATASET', textpath), 'w') as p:
+                p.write(str(self.data["length"]))
+            self.response["status"] = True
+            self.response["response"] = f"JSON file saved at: {jsonpath} and text file saved at: {textpath}"
+            return self.response
         except Exception as e:
-            Self.response["status"]=False
-            Self.response["response"]=f"Error Observed : {e}"
-            return Self.response
+            self.response["status"] = False
+            self.response["response"] = f"Error Observed: {e}"
+            return self.response

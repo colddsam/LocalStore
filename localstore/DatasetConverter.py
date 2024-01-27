@@ -3,71 +3,120 @@ import os
 import hashlib
 import json
 
+
 class Converter:
     def __init__(self) -> None:
-        self.dataset=None
-        self.length=None
-        
-    def Dataset_From_Directory(self,path:str)->None:
-        dataset={}
-        count=0
+        self.dataset = None
+
+    def Dataset_From_Directory(self, path: str, format: str = 'csv') -> None:
+        dataset = {
+            "length": 0,
+            "items": {}
+        }
+
         try:
             for file in os.listdir(path):
-                data=pd.read_csv(os.path.join(path,file))
-                data=data.dropna()
-                column=data.columns.values
-                dataset[file[:-4].lower()] = {}
+                if format == 'csv':
+                    data = pd.read_csv(os.path.join(path, file))
+                    ext = 4
+                elif format == 'xlsx':
+                    data = pd.read_excel(os.path.join(path, file))
+                    ext = 5
+                else:
+                    print(f"{format} format is not supported")
+                    exit()
+
+                data = data.dropna()
+                column = data.columns.values
+                item_key = file[:-ext].lower()
+
+                dataset["items"][item_key] = {
+                    "length": 0,
+                    "products": {}
+                }
+
                 for idx in range(len(data)):
                     try:
-                        temp={}
-                        hashed_value = hashlib.sha256(str(count).encode()).hexdigest()
+                        temp = {}
+                        var = item_key + \
+                            str(dataset["items"][item_key]["length"])
+                        hashed_value = hashlib.sha256(var.encode()).hexdigest()
+
                         for key in column:
-                            temp[key.lower()]=str(data[key][idx]).lower()
-                        dataset[file[:-4].lower()][hashed_value]=temp
-                        count += 1
+                            temp[key.lower()] = str(data[key][idx]).lower()
+
+                        dataset["items"][item_key]["products"][hashed_value] = temp
+                        dataset["items"][item_key]["length"] += 1
+                        dataset["length"] += 1
                     except Exception as p:
-                        pass
-                self.dataset=dataset
-                self.length=count
-            print("execution successful you can download it by Create_Dataset() method")
-        except Exception as e:
-            print(f"Error Observed : {e}")
-            
-    def Dataset_From_File(self,path:str)->None:
-        dataset={}
-        count=0
-        try:
-            data=pd.read_csv(path)
-            data=data.dropna()
-            column=data.columns.values
-            dataset[path[:-4].lower()]={}
-            for idx in range(len(data)):
-                try:
-                    temp={}
-                    hashed_value = hashlib.sha256(str(count).encode()).hexdigest()
-                    for key in column:
-                        temp[key.lower()]=str(data[key][idx]).lower()
-                    dataset[path[:-4].lower()][hashed_value]=temp
-                    count+=1
-                except Exception as e:
-                    pass
-            self.dataset=dataset
-            self.length=count
-            print("execution successful you can download it by Create_Dataset() method")
+                        print(f"{p} index has an error")
+
+            self.dataset = dataset
+            print(
+                "Execution successful. You can download it by calling the Create_Dataset() method.")
 
         except Exception as e:
-            print(f"Error Observed : {e}")
-        
-    def Create_Dataset(self)->None:
+            print(f"Error Observed: {e}")
+
+    def Dataset_From_File(self, path: str, format: str = 'csv') -> None:
+        dataset = {
+            "length": 0,
+            "items": {}
+        }
+
         try:
-            os.mkdir('DATASET')
+            if format == 'csv':
+                data = pd.read_csv(path)
+                ext = 4
+            elif format == 'xlsx':
+                data = pd.read_excel(path)
+                ext = 5
+            else:
+                print(f"{format} format is not supported")
+                exit()
+
+            data = data.dropna()
+            column = data.columns.values
+            item_key = path[:-ext].lower()
+
+            dataset["items"][item_key] = {
+                "length": 0,
+                "products": {}
+            }
+
+            for idx in range(len(data)):
+                try:
+                    temp = {}
+                    var = item_key + str(dataset["items"][item_key]["length"])
+                    hashed_value = hashlib.sha256(var.encode()).hexdigest()
+
+                    for key in column:
+                        temp[key.lower()] = str(data[key][idx]).lower()
+
+                    dataset["items"][item_key]["products"][hashed_value] = temp
+                    dataset["items"][item_key]["length"] += 1
+                    dataset["length"] += 1
+                except Exception as p:
+                    print(f"{p} index has an error")
+
+            self.dataset = dataset
+            print(
+                "Execution successful. You can download it by calling the Create_Dataset() method.")
+
         except Exception as e:
-            pass
+            print(f"Error Observed: {e}")
+
+    def Create_Dataset(self) -> None:
         try:
-            with open('DATASET\DATASET.json','w') as f:
-                json.dump(self.dataset,f)
-            with open('DATASET\LENGTH.txt','w') as o:
-                o.write(str(self.length))
-            print("File saved at DATASET directory")
+            os.makedirs('CONVERTED_DATASET', exist_ok=True)
+
+            with open('CONVERTED_DATASET/DATASET.json', 'w') as f:
+                json.dump(self.dataset, f)
+
+            with open('CONVERTED_DATASET/LENGTH.txt', 'w') as o:
+                o.write(str(self.dataset["length"]))
+
+            print("File saved at CONVERTED_DATASET directory")
+
         except Exception as e:
-            print(f"Error Observed : {e}")
+            print(f"Error Observed: {e}")
